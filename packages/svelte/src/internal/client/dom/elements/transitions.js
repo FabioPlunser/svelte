@@ -42,7 +42,7 @@ function css_style_from_camel_case(style) {
 		parts[0] +
 		parts
 			.slice(1)
-			.map(/** @param {any} word */ (word) => word[0].toUpperCase() + word.slice(1))
+			.map(/** @param {any} word */(word) => word[0].toUpperCase() + word.slice(1))
 			.join('')
 	);
 }
@@ -327,6 +327,13 @@ function animate(element, options, counterpart, t2, callback) {
 	/** @type {import('#client').Task} */
 	var task;
 
+	// Set initial styles for the delayed transition
+	if (delay > 0 && t2 === 1) {
+		const inlineStyles = (css && css(0, 1)) ?? "";
+		// Object.assign(element?.style, css_to_keyframe(inlineStyles));
+		element.setAttribute("style", inlineStyles);
+	}
+
 	if (css) {
 		// WAAPI
 		var keyframes = [];
@@ -351,6 +358,8 @@ function animate(element, options, counterpart, t2, callback) {
 
 				if (t2 === 1) {
 					animation.cancel();
+					element.setAttribute("style", "");
+
 				}
 			})
 			.catch((e) => {
